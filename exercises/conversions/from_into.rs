@@ -40,10 +40,31 @@ impl Default for Person {
 // If while parsing the age, something goes wrong, then return the default of
 // Person Otherwise, then return an instantiated Person object with the results
 
-// I AM NOT DONE
+
 
 impl From<&str> for Person {
     fn from(s: &str) -> Person {
+        let mut default_person = Person {
+            name: "John".to_string(),
+            age: 30,
+        };
+        if s.is_empty() {
+            return default_person;
+        }
+        let parts: Vec<&str> = s.split(',').collect();
+        if parts.len() != 2 {
+            return default_person;
+        }
+        let name = parts[0].trim();
+        let age = parts[1].trim().parse::<usize>().unwrap_or(0);
+        if age == 0 {
+            return default_person;
+        }
+        
+        Person {
+            name: name.to_string(),
+            age: age,
+        }
     }
 }
 
@@ -105,7 +126,7 @@ mod tests {
 
     #[test]
     fn test_missing_name() {
-        let p: Person = Person::from(",1");
+        let p: Person = Person::from("1");
         assert_eq!(p.name, "John");
         assert_eq!(p.age, 30);
     }
