@@ -44,27 +44,26 @@ impl Default for Person {
 
 impl From<&str> for Person {
     fn from(s: &str) -> Person {
-        let mut default_person = Person {
-            name: "John".to_string(),
-            age: 30,
-        };
         if s.is_empty() {
-            return default_person;
+            return Person::default();
         }
+
         let parts: Vec<&str> = s.split(',').collect();
         if parts.len() != 2 {
-            return default_person;
+            return Person::default();
         }
-        let name = parts[0].trim();
-        let age = parts[1].trim().parse::<usize>().unwrap_or(0);
-        if age == 0 {
-            return default_person;
+
+        let name = parts[0].to_string();
+        if name.is_empty() {
+            return Person::default();
         }
-        
-        Person {
-            name: name.to_string(),
-            age: age,
-        }
+
+        let age = match parts[1].parse::<usize>() {
+            Ok(age) => age,
+            Err(_) => return Person::default(),
+        };
+
+        Person { name, age }
     }
 }
 
